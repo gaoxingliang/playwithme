@@ -1,0 +1,47 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Include Bootstrap -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
+          integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <!-- Optional theme -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css"
+          integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+</head>
+<body>
+<div class="container-fluid" id="contents">
+    <div class="alert alert-primary" role="alert">
+        用百度云存储音乐并播放的平台
+    </div>
+    <button @click="login" type="button" class="btn btn-primary">用百度云账户登陆</button>
+</div>
+
+<!-- include Vue.js -->
+<!-- we include babel js so that we can write ES6 code in the browser
+     for a more production like setup it is recommended to setup a build process
+     to transpile and minify the code (such as using webpack)
+ -->
+<script src="https://cdn.jsdelivr.net/npm/vue@2.5.16/dist/vue.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/6.21.1/babel.min.js"></script>
+<script type="text/babel">
+
+    var app = new Vue({
+        el: '#contents',
+        methods: {
+            login() {
+                window.open('http://openapi.baidu.com/oauth/2.0/authorize?response_type=code&client_id=zBtHSchNrX0uwGhGzja9fPq2boGfh8Dn&redirect_uri=http%3A%2F%2Flocalhost%3A9096%2Fapi%2Fbaiduloginok&scope=basic,netdisk&display=tv&qrcode=1&force_login=1', '_blank');
+            }
+
+        }
+    });
+
+
+</script>
+</body>
+</html>
+
+

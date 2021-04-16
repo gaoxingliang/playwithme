@@ -1,0 +1,102 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Include Bootstrap -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
+          integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <!-- Optional theme -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css"
+          integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+</head>
+<body>
+<div class="container-fluid" id="contents">
+    <div class="alert alert-primary" role="alert">
+        用百度云存储音乐并播放的平台 - 文件列表 - <span >{{filelist.currentdir}}</span>
+    </div>
+    <a :href="'/api/filelist?dir=' + filelist.parentdir">返回上级目录</a>
+
+    <div v-for="(r, index) in filelist.files" class="list-group-item">
+        <div v-if="r.dir">
+            <a :href="'/api/filelist?dir=' + r.path">{{r.path}}</a>
+        </div>
+        <div v-else-if="r.ismusic">
+            <span >
+                {{r.filename}}
+            </span>
+            <button v-show="!r.existOnDisk" @click="download(r)" type="button" class="btn btn-primary">下载</button>&nbsp;&nbsp;
+            <audio v-if="r.existOnDisk" loop controls
+                   :src="'/api/filecontent?file=' + encodeURIComponent(r.path)"
+            >
+            </audio>
+        </div>
+        <div v-else>
+            <span>{{r.filename}}</span>
+        </div>
+    </div>
+</div>
+
+<!-- include Vue.js -->
+<!-- we include babel js so that we can write ES6 code in the browser
+     for a more production like setup it is recommended to setup a build process
+     to transpile and minify the code (such as using webpack)
+ -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.15.2/axios.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/vue@2.5.16/dist/vue.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/6.21.1/babel.min.js"></script>
+<script type="text/babel">
+    const QueryString = (function () {
+        return location.search
+            .replace(/^\?/ig, '')
+            .split('&')
+            .reduce((acc, cur) => {
+                const [key, value] = cur.split('=')
+                return ({...acc, [key]: value})
+            }, {});
+    })();
+
+    Vue.prototype.$http = axios
+    window.onload = function () {
+        var app = new Vue({
+            el: '#contents',
+            data: {
+                "filelist" : {
+                    currentdir: "",
+                    parentdir: "",
+                    files: []
+                }
+            },
+            methods: {
+                download: function (r) {
+                    var vm = this;
+                    vm.$http.post('/api/baidu/filedownloadtrigger', r).then(
+                        function (response) {
+                            vm.refresh()
+                        }).catch(function (response) {
+                        console.log(response)
+                    })
+                },
+                refresh: function () {
+                    var vm = this;
+
+                    vm.$http.get('/api/baidu/files', {params: QueryString}).then(
+                        function (response) {
+                            vm.filelist = response.data.data
+                        }).catch(function (response) {
+                        console.log(response)
+                    })
+                }
+            },
+            mounted: function () {
+                this.refresh()
+            }
+        });
+    };
+</script>
+</body>
+</html>
+
+
