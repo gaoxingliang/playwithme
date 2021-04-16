@@ -46,7 +46,7 @@ public class MainController {
         LOG.info("code {}", code);
         // GET https://openapi.baidu.com/oauth/2.0/token?grant_type=authorization_code&code=CODE&client_id=YOUR_CLIENT_ID&client_secret=YOUR_CLIENT_SECRET&redirect_uri=YOUR_REGISTERED_REDIRECT_URI
         String url = String.format("https://openapi.baidu.com/oauth/2.0/token?grant_type=authorization_code&code=%s&client_id=%s&client_secret=%s&redirect_uri=%s",
-                code, baiduConfig.getAppkey(), baiduConfig.getSecretkey(), URLEncoder.encode("http://localhost:9096/baiduloginok"));
+                code, baiduConfig.getAppkey(), baiduConfig.getSecretkey(), URLEncoder.encode("http://localhost:9096/api/baiduloginok"));
 
         LOG.info("The request key url {}", url);
 
